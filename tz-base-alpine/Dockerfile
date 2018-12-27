@@ -1,6 +1,6 @@
-FROM registry.op.tiaozhan.com/alpine:3.7
+FROM alpine:3.7
 
-MAINTAINER Tiaozhan Operation Team "op@tiaozhan.com"
+MAINTAINER Mingchung.Suen "mingchung.suen@gmail.com"
 
 # Copy APP source code
 COPY [".", "/runtime"]
