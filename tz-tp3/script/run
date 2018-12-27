@@ -1,0 +1,12 @@
+#!/bin/sh
+
+env | grep APP_  | sed "s%^%fastcgi_param %g;s%=% %g;s%$%;%g" > /etc/nginx/fastcgi.env  && \
+echo 'fastcgi_param SERVER_NAME $host;' >> /etc/nginx/fastcgi.env
+
+#make upload
+#test -d /runtime/data/Uploads/ || mkdir -p /runtime/data/Uploads/
+#chmod 777 /runtime/data/Uploads/
+#test -e /runtime/APP/Uploads/ || ln -sf /runtime/data/Uploads/ /runtime/APP/Uploads
+
+exec "supervisord" "-c" "/etc/supervisor.conf"
+

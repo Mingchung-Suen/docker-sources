@@ -1,0 +1,17 @@
+## Debian APT MAIN SOURCES LIST
+#
+#  @notice  Debian jessie
+#  @author  xczh <zhuxingchi@tiaozhan.com>
+#  @date    20160612
+#
+## MAINTAINED By Tiaozhan Operation Team ##
+
+# XJTU
+deb http://mirrors.xjtu.edu.cn/debian jessie main contrib non-free
+#deb-src http://mirrors.xjtu.edu.cn/debian jessie main contrib non-free
+deb http://mirrors.xjtu.edu.cn/debian jessie-proposed-updates main contrib non-free
+#deb-src http://mirrors.xjtu.edu.cn/debian jessie-proposed-updates main contrib non-free
+deb http://mirrors.xjtu.edu.cn/debian jessie-updates main contrib non-free
+#deb-src http://mirrors.xjtu.edu.cn/debian jessie-updates main contrib non-free
+deb http://mirrors.xjtu.edu.cn/debian-security/ jessie/updates main non-free contrib
+#deb-src http://mirrors.xjtu.edu.cn/debian-security/ jessie/updates main non-free contrib

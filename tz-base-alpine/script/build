@@ -1,0 +1,85 @@
+#!/bin/sh
+#
+# Build Script
+#
+# This file is a hook script excuted while building.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+
+info "Building start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+## init log and data and tmp dir
+mkdir -p /runtime/APP /runtime/config /runtime/script /runtime/log /runtime/data
+ln -sf /dev/shm /runtime/tmp
+chmod 755 /runtime/data /runtime/log
+
+## set default repo
+mv -f /runtime/config/repositories /etc/apk/repositories
+
+## upgrade apks
+apk update
+apk upgrade
+
+## set default timezone
+echo "Asia/Shanghai" >  /etc/timezone
+apk add tzdata --no-cache
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+apk del tzdata
+
+# rsyslog
+apk add rsyslog --no-cache
+
+# sshd
+apk add curl sudo openssh python --no-cache
+
+# pip
+mkdir /root/.pip
+mv -f /runtime/config/pip.conf /root/.pip/
+apk add py-pip --no-cache
+pip install -U pip
+
+rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+
+mv -f /runtime/config/rsyslog.conf /etc/rsyslog.conf
+mkdir -p /etc/rsyslog.d/
+#mv -f /runtime/config/tz.rbs /etc/rsyslog.d/tz.rbs
+
+echo "UseDNS yes" >> /etc/ssh/sshd_config
+echo "AllowUsers *@tz-relay" >> /etc/ssh/sshd_config
+
+ssh-keygen -t rsa -b 2048 -N "" -f /etc/ssh/ssh_host_rsa_key
+ssh-keygen -t dsa -b 1024 -N "" -f /etc/ssh/ssh_host_dsa_key
+ssh-keygen -t ecdsa -b 521 -N "" -f /etc/ssh/ssh_host_ecdsa_key
+ssh-keygen -t ed25519 -b 2048 -N "" -f /etc/ssh/ssh_host_ed25519_key
+
+test -d /var/run/sshd || mkdir /var/run/sshd
+
+for USER in `ls /runtime/config/sshd/`; do
+    USER_PASS=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c20`
+    adduser -D -s /bin/sh ${USER}
+    echo ${USER}:${USER_PASS} | chpasswd
+    mkdir /home/${USER}/.ssh
+    chmod 700 /home/${USER}/.ssh/
+    cp -f /runtime/config/sshd/${USER} /home/${USER}/.ssh/authorized_keys
+    chmod 600 /home/${USER}/.ssh/authorized_keys
+    chown -R ${USER}:${USER} /home/${USER}/.ssh/
+done
+
+# sudo
+cp -f /runtime/config/sudoers /etc/sudoers
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Building complete."
+
+exit

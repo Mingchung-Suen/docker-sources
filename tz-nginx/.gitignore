@@ -1,0 +1,5 @@
+Makefile
+*.pyc
+*.yml
+*.swp
+version

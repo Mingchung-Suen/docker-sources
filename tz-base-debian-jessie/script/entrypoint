@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Entrypoint Script
+#
+# This file is a entrypoint script excuted when container start.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+################################################################
+
+. /usr/lib/log
+
+set -e
+
+info "run entrypoint script..."
+
+if [ -x "/runtime/script/pre-run" ]; then
+    info "run pre-run hook..."
+    eval "/runtime/script/pre-run"
+else
+    info "no pre-run hook found or cannot exec, ignored"
+fi
+
+if [ "$1"x = "test"x ]; then
+    info "ready to run test: /runtime/script/test"
+    chmod 755 /runtime/script/test
+    exec "/runtime/script/test"
+fi
+
+if [ "$1"x = "version"x ]; then
+    exec "cat" "/etc/version"
+fi
+
+info "ready to run CMD: $@"
+exec "$@"
+
+exit

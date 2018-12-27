@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Build Script
+#
+# This file is a hook script excuted while building.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+info "Building start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+apk add --update --no-cache uwsgi uwsgi-python supervisor ca-certificates
+rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+
+mv -f /runtime/config/website.conf    /etc/nginx/sites-enabled/website.conf
+mv -f /runtime/config/supervisor.conf /etc/supervisor.conf
+chown -R nginx:nginx /runtime/log
+mkdir -p /run/nginx # or nginx won't start
+
+mv -f /runtime/config/rsyslog/* /etc/rsyslog.d/
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Building complete."
+
+exit

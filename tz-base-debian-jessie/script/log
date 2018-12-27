@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Shell Log
+#
+# Author: zhuxingchi <zhuxingchi@tiaozhan.com>
+#
+
+fatal() {
+    echo "[`date +%Y-%m-%d\ %T` FATAL] $1"
+    exit 1
+}
+
+error() {
+    echo "[`date +%Y-%m-%d\ %T` ERROR] $1"
+}
+
+warn() {
+    echo "[`date +%Y-%m-%d\ %T` WARN] $1"
+}
+
+info() {
+    echo "[`date +%Y-%m-%d\ %T` INFO] $1"
+}

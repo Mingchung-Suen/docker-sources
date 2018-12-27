@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+# test script
+#
+# This file is a hook script excuted while testing.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+
+info "Testing start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+cat <<END > /runtime/APP/uwsgifile.py
+import sys
+
+def app(env,start_response):
+    start_response('200 OK', [('Content-Type', 'text/html')])
+    f = open("/runtime/log/test.log", "w")
+    f.write("Hello Tenzor\n")
+    f.close
+    return '\nPython version:' + sys.version + "\n:)\n\n"
+END
+
+cat <<END > /runtime/APP/index.html
+<html>
+<head><title>Hello World</title></head>
+<h1>Hello World!</h1>
+This is a static file. To see python version. Click <a href="pyversion">Here</a>.
+</body>
+</html>
+END
+
+cat <<END > /tmp/supervisor.conf
+[supervisord]
+nodaemon=false
+logfile=/runtime/log/supervisor.log
+
+[program:nginx]
+command=/usr/sbin/nginx -g "daemon off;"
+
+[program:uwsgi]
+command=/usr/sbin/uwsgi /runtime/config/uwsgi.ini
+END
+
+info "Starting supervisord..."
+/usr/bin/supervisord -c /tmp/supervisor.conf
+
+sleep 3
+
+curl http://127.0.0.1/version
+cat /runtime/log/test.log
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Testing complete."
+
+exit

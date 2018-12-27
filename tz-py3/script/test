@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# test script
+#
+# This file is a hook script excuted while testing.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+
+info "Testing start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+python3 -V
+python3 -c "print('Hello Python3!')"
+pip3 -V
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Testing complete."
+
+exit

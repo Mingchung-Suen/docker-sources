@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Build Script
+#
+# This file is a hook script excuted while building.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+info "Building start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+## python3
+curl -O https://bootstrap.pypa.io/get-pip.py
+apk add python3 --update
+rm -rf /var/cache/apk/*
+
+## pip3
+mkdir -p /root/.pip
+mv -f /runtime/config/pip.conf /root/.pip/
+python3 get-pip.py
+rm get-pip.py
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Building complete."
+
+exit

@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# Build Script
+#
+# This file is a hook script excuted while building.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2017-2018 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+info "Building start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+## apk upgrade
+apk update
+apk upgrade
+
+## nginx php7 install
+apk --no-cache add php7 php7-mcrypt php7-soap php7-openssl php7-gmp php7-json \
+    php7-dom php7-pdo php7-zip php7-mysqli php7-bcmath php7-phar php7-openssl \
+    php7-session php7-gd php7-pdo_mysql php7-gettext php7-xmlreader \
+    php7-xmlrpc php7-bz2 php7-iconv php7-curl php7-ctype php7-fpm supervisor \
+    php7-xmlwriter php7-mbstring
+
+# chmod nginx-temp 
+chmod 777 -R /var/lib/nginx/
+
+## nginx configure
+mv -f /runtime/config/website.conf /etc/nginx/sites-enabled/website.conf
+touch /etc/nginx/fastcgi.env
+
+## rsyslog configs
+if [ "$(ls /runtime/config/rsyslog/)" != "" ];then
+    mv -f /runtime/config/rsyslog/* /etc/rsyslog.d/
+fi
+
+## php7-fpm configure 
+mv -f /runtime/config/php.ini /etc/php7/php.ini
+mv -f /runtime/config/php-fpm.conf /etc/php7/php-fpm.conf
+mv -f /runtime/config/php-fpm.d/www.conf /etc/php7/php-fpm.d/www.conf
+
+## Supervisor Configure
+mv -f /runtime/config/supervisor.conf /etc/supervisor.conf
+
+## cleaning
+rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+mkdir /var/tmp/nginx    # or nginx won't start
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Building complete."
+
+exit

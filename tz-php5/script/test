@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# test script
+#
+# This file is a hook script excuted while testing.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+
+info "Testing start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+cat <<END >/runtime/APP/test.php
+<?php
+    echo "Hello, PHP5!\n";
+?>
+END
+
+cat <<END >/tmp/supervisor.conf
+[supervisord]
+nodaemon=false
+logfile=/runtime/log/supervisor.log
+
+[program:nginx]
+command=nginx -g "daemon off;"
+
+[program:php-fpm]
+command=/usr/bin/php-fpm
+END
+
+info "Starting supervisord..."
+/usr/bin/supervisord -c /tmp/supervisor.conf 
+
+sleep 3
+
+nginx -V
+php -v
+php-fpm -v
+echo "supervisord: "`supervisord -v`
+
+curl localhost/test.php
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Testing complete."
+
+exit

@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# Pre-run script
+#
+# This file is a hook script excuted before running.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+
+info "Pre-run start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Pre-run complete."
+
+exit

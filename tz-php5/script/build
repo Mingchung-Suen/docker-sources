@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+# Build Script
+#
+# This file is a hook script excuted while building.
+# You can specify some commands to do.
+# 
+# NOTICE: You should return 0 when no error occurred.
+#
+# Copyright (C) 2015 Tiaozhan Net. All rights reserved.
+#########################################################
+
+set -e
+
+. /usr/lib/log
+info "Building start..."
+
+#### NOW YOU CAN BEGIN FROM HERE ####
+
+## apk upgrade
+apk update
+apk upgrade
+
+## nginx php5 install
+apk --no-cache add php5 php5-mysqli php5-curl php5-iconv php5-fpm php5-mysql php5-json php5-phar php5-openssl php5-pdo_mysql supervisor
+
+# chmod nginx-temp 
+chmod 777 -R /var/lib/nginx/
+
+## nginx configure
+mv -f /runtime/config/website.conf /etc/nginx/sites-enabled/website.conf
+touch /etc/nginx/fastcgi.env
+
+## rsyslog configs
+if [ "$(ls /runtime/config/rsyslog/)" != "" ];then
+    mv -f /runtime/config/rsyslog/* /etc/rsyslog.d/
+fi
+
+## php5-fpm configure 
+sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/php-fpm.conf
+sed -i "s/error_log = \/var\/log\/php-fpm.log/error_log = \/runtime\/log\/php-fpm.log/" /etc/php5/php-fpm.conf
+sed -i "s/expose_php = On/expose_php = Off/" /etc/php5/php.ini
+
+## Supervisor Configure
+mv -f /runtime/config/supervisor.conf /etc/supervisor.conf
+
+## cleaning
+rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+
+#### THE END OF YOUR SCRIPT ####
+
+info "Building complete."
+
+exit

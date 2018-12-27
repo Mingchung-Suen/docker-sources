@@ -1,0 +1,15 @@
+# docker build
+configure
+Makefile
+.dockerignore
+Dockerfile
+docker-compose.yml
+extends.yml
+
+# useless file
+README.md
+*/README.md
+
+# log
+*.log
+log/*
